@@ -1,3 +1,6 @@
+console.log('Starting server...');
+console.time('Server started in');
+
 import fs from 'node:fs/promises';
 
 import bodyParser from 'body-parser';
