@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 import Places from "./Places.jsx";
-import { use } from "react";
 
 export default function AvailablePlaces({ onSelectPlace }) {
   const [availablePlaces, setAvailablePlaces] = useState([]);
@@ -19,6 +18,8 @@ export default function AvailablePlaces({ onSelectPlace }) {
     <Places
       title="Available Places"
       places={availablePlaces}
+      isLoading={availablePlaces.length === 0}
+      loadingText="Fetching places data..."
       fallbackText="No places available."
       onSelectPlace={onSelectPlace}
     />
