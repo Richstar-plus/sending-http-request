@@ -1,16 +1,19 @@
-import { useRef, useState, useCallback } from 'react';
+import { useRef, useState, useCallback } from "react";
 
-import Places from './components/Places.jsx';
-import Modal from './components/Modal.jsx';
-import DeleteConfirmation from './components/DeleteConfirmation.jsx';
-import logoImg from './assets/logo.png';
-import AvailablePlaces from './components/AvailablePlaces.jsx';
-import { updateUserPlaces } from './http.js';
+import Places from "./components/Places.jsx";
+import Modal from "./components/Modal.jsx";
+import DeleteConfirmation from "./components/DeleteConfirmation.jsx";
+import logoImg from "./assets/logo.png";
+import AvailablePlaces from "./components/AvailablePlaces.jsx";
+import { updateUserPlaces } from "./http.js";
+import Error  from "./components/Error.jsx";
 
 function App() {
   const selectedPlace = useRef();
 
   const [userPlaces, setUserPlaces] = useState([]);
+
+  const [errorUpdatingPlaces, setErrorUpdatingPlaces] = useState();
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -34,16 +37,19 @@ function App() {
       return [selectedPlace, ...prevPickedPlaces];
     });
 
-    try{
+    try {
       await updateUserPlaces([...userPlaces, selectedPlace]);
     } catch (error) {
-     // ....
+      setUserPlaces(userPlaces);
+      setErrorUpdatingPlaces({
+        message: error.message || "Failed to update user places.",
+      });
     }
   }
 
   const handleRemovePlace = useCallback(async function handleRemovePlace() {
     setUserPlaces((prevPickedPlaces) =>
-      prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id)
+      prevPickedPlaces.filter((place) => place.id !== selectedPlace.current.id),
     );
 
     setModalIsOpen(false);
@@ -51,6 +57,18 @@ function App() {
 
   return (
     <>
+      <Modal
+        open={errorUpdatingPlaces}
+        onClose={() => setErrorUpdatingPlaces(null)}
+      >
+        {errorUpdatingPlaces && (
+          <Error
+            title="An error occurred"
+            message={errorUpdatingPlaces?.message}
+            onConfirm={() => setErrorUpdatingPlaces(null)}
+          />
+        )}
+      </Modal>
       <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
         <DeleteConfirmation
           onCancel={handleStopRemovePlace}
