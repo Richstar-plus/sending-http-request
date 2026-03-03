@@ -1,5 +1,4 @@
 console.log('Starting server...');
-console.time('Server started in');
 
 import fs from 'node:fs/promises';
 
